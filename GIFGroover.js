@@ -7,8 +7,7 @@ function GIFGroover() {
     const frames   = [];
     const comments = [];
     const events   = [];
-    const timeouts = [];
-    const messageId = Date.now() + (Math.random() * 20000000 | 0);    
+   
     nextFrameTime  = undefined;
     nextFrame      = null;
     playSpeed      = 1;
@@ -24,18 +23,7 @@ function GIFGroover() {
         EOF     : 59,   // This is entered as decimal
         EXT     : 33,
     };
-    function timeout(fn) {
-        postMessage(messageId, "");
-        timeouts.push(fn);
-    }
-    function timeoutHandler(event) {
-        if (event.source === window && event.data === messageId) {
-            (timeouts.shift())();
-            event.stopPropagation();
-        }
-    }
-    function startTimeoutHandler() { addEventListener("message", timeoutHandler, true) }
-    function stopTimeoutHandler() { removeEventListener("message", timeoutHandler) }
+
     function Stream(data) {
         var pos = this.pos = 0;
         const dat = this.data = new Uint8Array(data);
@@ -131,7 +119,7 @@ function GIFGroover() {
             bgColorCSS = bg !== undefined ? `rgb(${bg&255},${(bg>>8)&255},${(bg>>16)&255})` : `black`;
         }
         fireEvent("decodestart", { width : gifWidth, height : gifHeight}, true);
-        timeout(parseBlock);
+        setTimeout(parseBlock,0);
     }
     function parseAppExt() { // get application specific data.
         st.pos += 1;
@@ -253,7 +241,7 @@ function GIFGroover() {
             if (gif.firstFrameOnly) { return finnished() }
         } else if (blockId === GIF_FILE.EOF) { return finnished() }
         else { parseExt() }
-        timeout(parseBlock); 
+        setTimeout(parseBlock,0); 
         
     };
     function cancelLoad() { // cancels the loading. This will cancel the load before the next frame is decoded
@@ -293,7 +281,7 @@ function GIFGroover() {
         if (gifSrc === undefined) {
             startTimeoutHandler();
             gifSrc = filename;
-            timeout(()=>loadGif(gifSrc));
+            setTimeout(()=>loadGif(gifSrc),0);
         } else {
             const message = "GIF is limited to a single load. Create a new GIF object to load another gif."
             error(message);
