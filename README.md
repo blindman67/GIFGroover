@@ -145,7 +145,7 @@ If you set `firstFrameOnly` to true GIFGroover will only decode the very first f
 GIFGroover.firstFrameOnly = true; // default is false
 ```
     
-While decoding GIFGroover will fire `onprogress` event containing the fraction of file data decoded (0-1) and the number of frames decoded. At any time you may cancel the decoding by calling `GIFGroover.cancel`. If GIFGroover is working on a frame it will complete the frame before stopping. A canceled gif can still play but will only play the frames loaded.
+While decoding GIFGroover will fire `onprogress` event containing the percent of file data decoded  `event.progress` (0-100) and the number of frames decoded `event.frameCount`. At any time you may cancel the decoding by calling `GIFGroover.cancel`. If GIFGroover is working on a frame it will complete the frame before stopping. A canceled gif can still play but will only play the frames loaded.
 
 ```Javascript
 GIFGroover.cancel(); // call to stop decoding

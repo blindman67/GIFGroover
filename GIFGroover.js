@@ -96,10 +96,10 @@ function GIFGroover() {
         count <<= 2;
         const colours = new Uint8Array(count);
         while (i < count) { 
-            colors[i++] = st.data[st.pos++];
-            colors[i++] = st.data[st.pos++];
-            colors[i++] = st.data[st.pos++];
-            colors[i++] = 255;
+            colours[i++] = st.data[st.pos++];
+            colours[i++] = st.data[st.pos++];
+            colours[i++] = st.data[st.pos++];
+            colours[i++] = 255;
         }
         return new Uint32Array(colours.buffer);
     }
@@ -210,7 +210,7 @@ function GIFGroover() {
         pixelBufSize      = undefined;
         deinterlaceBuf    = undefined;
         complete          = true;
-        stopTimeoutHandler();
+
     }
     function finnished() { // called when the load has completed
         loading = false;
@@ -249,9 +249,9 @@ function GIFGroover() {
         return cancel = true;
     }
     function error(message) {
-        stopTimeoutHandler();
+     
         fireEvent("error", {message : message}, true);
-        events.decodestart = events.onload  = undefined;
+        //events.decodestart = events.onload  = undefined;
         loading = false;
     }
     function doOnloadEvent() { // fire onload event if set
@@ -269,17 +269,28 @@ function GIFGroover() {
         loading = true;
         ajax.responseType = "arraybuffer";
         ajax.onload = function (e) {
-            if (e.target.status === 404) { error("File not found") }
-            else if (e.target.status >= 200 && e.target.status < 300 ) { dataLoaded(ajax.response) }
-            else { error("Loading error : " + e.target.status) }
+            if (e.target.status === 404) { 
+                error("File not found") 
+                gifSrc = undefined;
+                
+            } else if (e.target.status >= 200 && e.target.status < 300 ) { dataLoaded(ajax.response) }
+            else { 
+                error("Loading error : " + e.target.status) 
+                gifSrc = undefined;
+                
+             }
         };
-        ajax.onerror = function (e) { error("File error " + e.message) };
+        ajax.onerror = function (e) { 
+            error("File error " + e.message) 
+            gifSrc = undefined;
+        
+        };
         ajax.open('GET', filename, true);
         ajax.send();
     }
     function startLoad(filename) {
         if (gifSrc === undefined) {
-            startTimeoutHandler();
+
             gifSrc = filename;
             setTimeout(()=>loadGif(gifSrc),0);
         } else {
@@ -420,6 +431,8 @@ function GIFGroover() {
         get src()          { return gifSrc },       // get the gif URL
         get width()        { return gifWidth },     // Read only. Width in pixels
         get height()       { return gifHeight },    // Read only. Height in pixels
+        get naturalWidth() { return gifWidth },    // Read only. Height in pixels 
+        get naturalHeight(){ return gifHeight },    // Read only. Height in pixels 
         get allFrames()    { return frames.map(frame => frame.image) },  // returns array of frames as images (canvas).
         get duration()     { return duration },     // Read only. gif duration in ms (1/1000 second)
         get currentFrame() { return currentFrame }, // gets the current frame index
