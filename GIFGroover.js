@@ -250,7 +250,7 @@ function GIFGroover() {
     }
     function error(message) {
      
-        fireEvent("error", {message : message}, true);
+        fireEvent("error", {message : message}, false);
         //events.decodestart = events.onload  = undefined;
         loading = false;
     }
@@ -270,19 +270,19 @@ function GIFGroover() {
         ajax.responseType = "arraybuffer";
         ajax.onload = function (e) {
             if (e.target.status === 404) { 
-                error("File not found") 
                 gifSrc = undefined;
+                error("File not found") 
                 
             } else if (e.target.status >= 200 && e.target.status < 300 ) { dataLoaded(ajax.response) }
             else { 
-                error("Loading error : " + e.target.status) 
                 gifSrc = undefined;
+                error("Loading error : " + e.target.status) 
                 
              }
         };
         ajax.onerror = function (e) { 
-            error("File error " + e.message) 
             gifSrc = undefined;
+            error("File error " + e.message) 
         
         };
         ajax.open('GET', filename, true);
